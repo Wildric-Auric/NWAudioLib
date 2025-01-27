@@ -46,13 +46,15 @@ void* getCtx();
 
 int  initSrc(Source, const SourceInitData&);
 
-void playSrc(Source);
+int playSrc(Source);
 
-void stopSrc(Source);
+int stopSrc(Source);
 
-void setSrcVol(Source, float);
+int pauseSrc(Source);
 
-void setSrcPitch(Source, float i);
+int setSrcVol(Source, float);
+
+int setSrcPitch(Source, float i);
 
 void querySrcInfo(Source, SourceInfo*);
 /*
