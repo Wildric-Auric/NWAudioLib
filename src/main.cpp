@@ -32,56 +32,22 @@ int main() {
 //    AudioLib::setSrcPitch(src, 2.0);
 //    AudioLib::setSrcPitch(src, 1.0);
     
-    IUnknown* xapo;
-    NW_AUD_WIN_CHECK(XAudio2CreateReverb(&xapo), -1);
-    XAUDIO2_EFFECT_DESCRIPTOR desc{};
-    desc.InitialState   = true;
-    desc.pEffect        = xapo;
-    desc.OutputChannels = 2;
-    XAUDIO2_EFFECT_CHAIN chain{};
-    chain.EffectCount = 1;
-    chain.pEffectDescriptors = &desc;
-    
-    
-   IXAudio2SourceVoice* s = (IXAudio2SourceVoice*)src;
-   NW_AUD_WIN_CHECK(s->SetEffectChain(&chain), -2);
-
-   XAUDIO2FX_REVERB_PARAMETERS rparams{};
-   rparams.ReflectionsDelay = XAUDIO2FX_REVERB_DEFAULT_REFLECTIONS_DELAY;
-   rparams.ReverbDelay = XAUDIO2FX_REVERB_DEFAULT_REVERB_DELAY;
-   rparams.RearDelay = XAUDIO2FX_REVERB_DEFAULT_REAR_DELAY;
-   rparams.PositionLeft = XAUDIO2FX_REVERB_DEFAULT_POSITION;
-   rparams.PositionRight = XAUDIO2FX_REVERB_DEFAULT_POSITION;
-   rparams.PositionMatrixLeft = XAUDIO2FX_REVERB_DEFAULT_POSITION_MATRIX;
-   rparams.PositionMatrixRight = XAUDIO2FX_REVERB_DEFAULT_POSITION_MATRIX;
-   rparams.EarlyDiffusion = XAUDIO2FX_REVERB_DEFAULT_EARLY_DIFFUSION;
-   rparams.LateDiffusion = XAUDIO2FX_REVERB_DEFAULT_LATE_DIFFUSION;
-   rparams.LowEQGain = XAUDIO2FX_REVERB_DEFAULT_LOW_EQ_GAIN;
-   rparams.LowEQCutoff = XAUDIO2FX_REVERB_DEFAULT_LOW_EQ_CUTOFF;
-   rparams.HighEQGain = XAUDIO2FX_REVERB_DEFAULT_HIGH_EQ_GAIN;
-   rparams.HighEQCutoff = XAUDIO2FX_REVERB_DEFAULT_HIGH_EQ_CUTOFF;
-   rparams.RoomFilterFreq = XAUDIO2FX_REVERB_DEFAULT_ROOM_FILTER_FREQ;
-   rparams.RoomFilterMain = XAUDIO2FX_REVERB_DEFAULT_ROOM_FILTER_MAIN;
-   rparams.RoomFilterHF = XAUDIO2FX_REVERB_DEFAULT_ROOM_FILTER_HF;
-   rparams.ReflectionsGain = XAUDIO2FX_REVERB_DEFAULT_REFLECTIONS_GAIN;
-   rparams.ReverbGain = XAUDIO2FX_REVERB_DEFAULT_REVERB_GAIN;
-   rparams.DecayTime = XAUDIO2FX_REVERB_DEFAULT_DECAY_TIME;
-   rparams.Density = XAUDIO2FX_REVERB_DEFAULT_DENSITY;
-   rparams.RoomSize = XAUDIO2FX_REVERB_DEFAULT_ROOM_SIZE;
-   rparams.WetDryMix = XAUDIO2FX_REVERB_DEFAULT_WET_DRY_MIX; 
-   //rparams = {};
-   NW_AUD_WIN_CHECK(s->SetEffectParameters(0, &rparams, sizeof(rparams)), -4);
-   NW_AUD_WIN_CHECK(s->EnableEffect(0), -5);
 
    AudioLib::initSrc(src, init);
+   AudioLib::setDefMasterVol(0.2);
+    
+   AudioLib::addReverb(src, AudioLib_I3DL2_PRESET_UNDERWATER);
+
    AudioLib::playSrc(src);
-
-
-   xapo->Release();
-
-    while (1) {
+   AudioLib::disableReverb(src);
+   long long i = 30000000000;
+   while (1) {
+        i--;
+        if (i == 0)
+            AudioLib::enableReverb(src);
 
     }
+    AudioLib::destroyCtx();
     
     return 0;
 }
